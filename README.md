@@ -13,7 +13,7 @@ A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. 
 
 | Dependency | Version |
 |---|---|
-| PHP | 8.2, 8.3, 8.4, 8.5 |
+| PHP | 8.2, 8.3, 8.4 |
 | Laravel | ^12.0, ^13.0 |
 | Filament | ^5.0 (optional) |
 
