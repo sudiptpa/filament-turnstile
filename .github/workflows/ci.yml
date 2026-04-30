@@ -30,7 +30,7 @@ jobs:
             testbench: '^11.0'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -38,7 +38,7 @@ jobs:
           coverage: ${{ matrix.php-version == '8.4' && 'xdebug' || 'none' }}
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: vendor
           key: php-${{ matrix.php-version }}-laravel-${{ matrix.laravel }}-${{ hashFiles('composer.json') }}
