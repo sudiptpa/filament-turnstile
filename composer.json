@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": ">=8.2 <8.5",
+        "php": ">=8.2,<8.6",
         "filament/forms": "^5.0",
         "illuminate/contracts": "^12.0|^13.0",
         "illuminate/http": "^12.0|^13.0",
