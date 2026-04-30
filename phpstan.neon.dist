@@ -1,0 +1,13 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    excludePaths:
+        # filament/filament is not a dev dependency — the Login page is excluded from analysis
+        - src/Pages/Auth/Login.php
+    ignoreErrors:
+        -
+            # Test stubs pass simplified closures that don't match the full $fail signature type
+            message: '#Parameter \#3 \$fail of method Sujip\\Filament\\Turnstile\\Rules\\TurnstileRule::validate\(\) expects Closure#'
+            path: tests/Unit/TurnstileRuleTest.php

@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3', '8.4', '8.5']
+        laravel: ['12.*', '13.*']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: ${{ matrix.php-version == '8.4' && 'xdebug' || 'none' }}
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: php-${{ matrix.php-version }}-laravel-${{ matrix.laravel }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            php-${{ matrix.php-version }}-laravel-${{ matrix.laravel }}-
+
+      - name: Pin packages to Laravel ${{ matrix.laravel }}
+        run: |
+          if [ "${{ matrix.laravel }}" = "13.*" ]; then
+            TESTBENCH="^11.0"
+          else
+            TESTBENCH="^10.0"
+          fi
+          composer require \
+            "illuminate/contracts:${{ matrix.laravel }}" \
+            "illuminate/http:${{ matrix.laravel }}" \
+            "illuminate/support:${{ matrix.laravel }}" \
+            "orchestra/testbench:${TESTBENCH}" \
+            --no-interaction --no-update
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - run: mkdir -p build/logs
+
+      - run: composer test
+
+      - run: composer stan
+
+      - run: composer coverage
+        if: matrix.php-version == '8.4'
+
+      - run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.php-version == '8.4'
+        with:
+          name: phpunit-coverage-${{ matrix.php-version }}-laravel${{ matrix.laravel }}
+          path: build/logs/clover.xml

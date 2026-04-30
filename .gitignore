@@ -1,0 +1,27 @@
+# Dependencies
+vendor/
+composer.lock
+
+# Testing & Coverage
+.phpunit.cache
+build/
+coverage.xml
+*.log
+
+# Environment & Secrets
+.env
+.env.testing
+.env.*.local
+
+# IDE & Editor
+.idea/
+.vscode/
+.history/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
