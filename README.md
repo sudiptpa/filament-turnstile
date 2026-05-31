@@ -3,6 +3,7 @@
 [![CI](https://github.com/sudiptpa/filament-turnstile/actions/workflows/ci.yml/badge.svg)](https://github.com/sudiptpa/filament-turnstile/actions/workflows/ci.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sudiptpa/filament-turnstile.svg)](https://packagist.org/packages/sudiptpa/filament-turnstile)
 [![PHP Version](https://img.shields.io/badge/php-8.2%2B-blue)](https://www.php.net)
+[![Downloads](https://img.shields.io/packagist/dt/sudiptpa/filament-turnstile)](https://packagist.org/packages/sudiptpa/filament-turnstile)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. Drop `TurnstileInput` into any Filament form schema, protect the admin login with one line, or use the standalone validation rule and Blade component in any Laravel controller, form request, or view — no CAPTCHA, no image puzzles, just a silent, privacy-respecting bot challenge.
