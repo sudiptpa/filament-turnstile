@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/packagist/dt/sudiptpa/filament-turnstile)](https://packagist.org/packages/sudiptpa/filament-turnstile)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. Drop `TurnstileInput` into any Filament form schema, protect the admin login with one line, or use the standalone validation rule and Blade component in any Laravel controller, form request, or view — no CAPTCHA, no image puzzles, just a silent, privacy-respecting bot challenge.
+A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. Drop `TurnstileInput` into any Filament form schema, protect the admin login with one line, or use the standalone validation rule and Blade component in any Laravel controller, form request, or view. No CAPTCHA, no image puzzles, just a silent, privacy-respecting bot challenge.
 
 ---
 
@@ -14,7 +14,7 @@ A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. 
 
 | Dependency | Version |
 |---|---|
-| PHP | 8.2, 8.3, 8.4 |
+| PHP | 8.2, 8.3, 8.4, 8.5 |
 | Laravel | ^12.0, ^13.0 |
 | Filament | ^5.0 (optional) |
 
@@ -86,11 +86,11 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-The login page renders the Turnstile widget when credentials are present and skips it when they are not — no conditional logic required in your application.
+The login page renders the Turnstile widget when credentials are present and skips it when they are not. No conditional logic required in your application.
 
 ---
 
-### 3. Plain Laravel — Blade Component
+### 3. Plain Laravel: Blade Component
 
 Use the `<x-turnstile />` component in any Blade template. The component accepts optional `theme`, `size`, and any additional HTML attributes.
 
@@ -121,7 +121,7 @@ Available props:
 
 ---
 
-### 4. Plain Laravel — Form Requests
+### 4. Plain Laravel: Form Requests
 
 ```php
 use Sujip\Filament\Turnstile\Rules\TurnstileRule;
@@ -141,7 +141,7 @@ class ContactRequest extends FormRequest
 
 ---
 
-### 5. Plain Laravel — Controllers
+### 5. Plain Laravel: Controllers
 
 ```php
 use Sujip\Filament\Turnstile\Rules\TurnstileRule;
@@ -168,7 +168,7 @@ new TurnstileRule(app(TurnstileClientContract::class))
 
 ## Custom Key Resolver
 
-By default, credentials are read from `config/filament-turnstile.php`. If your application resolves keys differently — for example, from a database, per-tenant settings, or a secrets manager — implement `TurnstileKeyResolverContract` and bind it in your `AppServiceProvider`:
+By default, credentials are read from `config/filament-turnstile.php`. If your application resolves keys differently, for example from a database, per-tenant settings, or a secrets manager, implement `TurnstileKeyResolverContract` and bind it in your `AppServiceProvider`:
 
 ```php
 use Sujip\Filament\Turnstile\Contracts\TurnstileKeyResolverContract;
@@ -195,7 +195,7 @@ final class YourKeyResolver implements TurnstileKeyResolverContract
 $this->app->bind(TurnstileKeyResolverContract::class, YourKeyResolver::class);
 ```
 
-Return `null` to indicate that credentials are unavailable — the widget will be suppressed and validation skipped automatically. `TurnstileInput`, the `Login` page, `TurnstileRule`, and `<x-turnstile />` all resolve credentials through this single contract.
+Return `null` to indicate that credentials are unavailable. The widget will be suppressed and validation skipped automatically. `TurnstileInput`, the `Login` page, `TurnstileRule`, and `<x-turnstile />` all resolve credentials through this single contract.
 
 ---
 
@@ -266,4 +266,4 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
