@@ -12,6 +12,9 @@ use Sujip\Filament\Turnstile\Contracts\TurnstileKeyResolverContract;
 use Sujip\Filament\Turnstile\Exceptions\MissingTurnstileCredentials;
 use Sujip\Filament\Turnstile\Exceptions\TurnstileVerificationFailed;
 
+/**
+ * Default Turnstile client, sends the verification request over HTTP with retries.
+ */
 final readonly class TurnstileClient implements TurnstileClientContract
 {
     public function __construct(

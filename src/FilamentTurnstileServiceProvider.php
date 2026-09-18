@@ -12,6 +12,9 @@ use Sujip\Filament\Turnstile\Resolvers\ConfigKeyResolver;
 use Sujip\Filament\Turnstile\Rules\TurnstileRule;
 use Sujip\Filament\Turnstile\Support\TurnstileClient;
 
+/**
+ * Registers Turnstile bindings, config, and views with the application.
+ */
 final class FilamentTurnstileServiceProvider extends ServiceProvider
 {
     public function register(): void
