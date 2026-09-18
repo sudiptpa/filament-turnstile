@@ -4,7 +4,7 @@ parameters:
         - src
         - tests
     excludePaths:
-        # filament/filament is not a dev dependency — the Login page is excluded from analysis
+        # filament/filament is not a dev dependency, so the Login page is excluded from analysis
         - src/Pages/Auth/Login.php
     ignoreErrors:
         -
