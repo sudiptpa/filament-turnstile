@@ -12,6 +12,9 @@ use Illuminate\Validation\ValidationException;
 use Sujip\Filament\Turnstile\Contracts\TurnstileClientContract;
 use Sujip\Filament\Turnstile\Exceptions\TurnstileException;
 
+/**
+ * Filament admin login page that adds a Turnstile challenge before authentication.
+ */
 class Login extends FilamentLogin
 {
     public string $turnstileToken = '';
