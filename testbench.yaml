@@ -1,0 +1,20 @@
+providers:
+  - Livewire\LivewireServiceProvider
+  - BladeUI\Icons\BladeIconsServiceProvider
+  - BladeUI\Heroicons\BladeHeroiconsServiceProvider
+  - Filament\Support\SupportServiceProvider
+  - Filament\Actions\ActionsServiceProvider
+  - Filament\Forms\FormsServiceProvider
+  - Filament\Infolists\InfolistsServiceProvider
+  - Filament\Notifications\NotificationsServiceProvider
+  - Filament\QueryBuilder\QueryBuilderServiceProvider
+  - Filament\Schemas\SchemasServiceProvider
+  - Filament\Tables\TablesServiceProvider
+  - Filament\Widgets\WidgetsServiceProvider
+  - Filament\FilamentServiceProvider
+  - Sujip\Filament\Turnstile\FilamentTurnstileServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+env:
+  APP_KEY: base64:YnJvd3Nlci10ZXN0cy1vbmx5LWtleS0zMi1ieXRlcyE=
+  APP_DEBUG: true

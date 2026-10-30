@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Starts the workbench app used by the Playwright browser tests.
+# Usage: bin/browser-server <port> [unconfigured]
+set -euo pipefail
+
+PORT="${1:?port required}"
+MODE="${2:-configured}"
+
+PHP_BIN="${PHP_BIN:-php}"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+mkdir -p build
+export DB_DATABASE="$ROOT/build/browser-$PORT.sqlite"
+rm -f "$DB_DATABASE"
+touch "$DB_DATABASE"
+
+rm -f "build/browser-$PORT.unconfigured"
+if [ "$MODE" = "unconfigured" ]; then
+    touch "build/browser-$PORT.unconfigured"
+fi
+
+export E2E_PORT="$PORT"
+# The panel loads many assets at once; a single PHP process stalls on them.
+export PHP_CLI_SERVER_WORKERS="${PHP_CLI_SERVER_WORKERS:-4}"
+"$PHP_BIN" vendor/bin/testbench view:clear --no-interaction >/dev/null
+"$PHP_BIN" vendor/bin/testbench filament:assets --no-interaction >/dev/null
+"$PHP_BIN" vendor/bin/testbench migrate:fresh --seed --seeder='Workbench\Database\Seeders\DatabaseSeeder' --no-interaction >/dev/null
+exec "$PHP_BIN" vendor/bin/testbench serve --host=127.0.0.1 --port="$PORT" --no-reload

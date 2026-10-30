@@ -25,3 +25,8 @@ coverage.xml
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Browser tests
+node_modules/
+test-results/
+playwright-report/

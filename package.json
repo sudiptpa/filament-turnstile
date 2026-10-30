@@ -1,0 +1,11 @@
+{
+    "name": "filament-turnstile-browser-tests",
+    "private": true,
+    "description": "Browser tests for the Filament Turnstile package. Not published and not needed by package users.",
+    "scripts": {
+        "test:browser": "playwright test"
+    },
+    "devDependencies": {
+        "@playwright/test": "1.56.1"
+    }
+}

@@ -79,3 +79,44 @@ jobs:
         with:
           name: phpunit-coverage-${{ matrix.php-version }}-laravel-${{ matrix.laravel == '12.*' && '12' || '13' }}
           path: build/logs/clover.xml
+
+  browser:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        filament: ['5.7.8', '5.*']
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pin Filament ${{ matrix.filament }}
+        run: composer require --dev "filament/filament:${{ matrix.filament }}" -W --no-interaction --no-progress
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: npx playwright test --config e2e/playwright.config.ts
+        env:
+          CI: 'true'
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ strategy.job-index }}
+          path: |
+            playwright-report/
+            test-results/
