@@ -260,6 +260,22 @@ composer coverage    # Coverage report (requires Xdebug)
 
 ---
 
+### Compatibility
+
+| Package | Filament | Laravel | PHP |
+| --- | --- | --- | --- |
+| Unreleased | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
+
+Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
+
+### Published views
+
+If you published the package views, your copy does not get later fixes. After upgrading, delete the published copy or publish again with `--force`:
+
+```bash
+php artisan vendor:publish --tag=filament-turnstile-views --force
+```
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
