@@ -223,8 +223,9 @@ Cloudflare provides official test keys that work on any domain, including `local
 | Purpose | Site key | Secret key |
 |---|---|---|
 | Always passes | `1x00000000000000000000AA` | `1x0000000000000000000000000000000AA` |
-| Always blocks | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
-| Forces interactive | `3x00000000000000000000FF` | `3x0000000000000000000000000000000AA` |
+| Always fails | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
+| Forces interactive | `3x00000000000000000000FF` | `1x0000000000000000000000000000000AA` |
+| Token already spent | `1x00000000000000000000AA` | `3x0000000000000000000000000000000AA` |
 
 Add these to your `.env.testing` or declare them in `phpunit.xml`:
 

@@ -12,8 +12,10 @@ return [
     | Your Cloudflare Turnstile site key. This is the public key rendered in
     | the widget. Find it in your Cloudflare dashboard under Turnstile.
     |
-    | Test site key (always passes): 1x00000000000000000000AA
-    | Test site key (always blocks): 2x00000000000000000000AB
+    | Cloudflare test site keys (see developers.cloudflare.com/turnstile):
+    |   1x00000000000000000000AA  always passes
+    |   2x00000000000000000000AB  always fails
+    |   3x00000000000000000000FF  forces an interactive challenge
     |
     */
 
@@ -27,8 +29,10 @@ return [
     | Your Cloudflare Turnstile secret key. Used for server-side token
     | verification. Never expose this in the browser.
     |
-    | Test secret key (always passes): 1x0000000000000000000000000000000AA
-    | Test secret key (always fails):  2x0000000000000000000000000000000AA
+    | Cloudflare test secret keys:
+    |   1x0000000000000000000000000000000AA  always passes
+    |   2x0000000000000000000000000000000AA  always fails
+    |   3x0000000000000000000000000000000AA  returns "token already spent"
     |
     */
 
