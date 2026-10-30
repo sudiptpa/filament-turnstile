@@ -264,9 +264,9 @@ composer coverage    # Coverage report (requires Xdebug)
 
 | Package | Filament | Laravel | PHP |
 | --- | --- | --- | --- |
-| Unreleased | 5.x (tested on 5.6, 5.7 and 5.11) | 12 and 13 | 8.2 to 8.5 |
+| Unreleased | 5.8.3 and later (tested on 5.8.3 and 5.11) | 12 and 13 | 8.2 to 8.5 |
 
-Filament's own login code-step input differs between 5.x releases. The package does not depend on it. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
+Filament's own login code-step input differs between 5.x releases. The package does not depend on it. Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
 
 ### Published views
 

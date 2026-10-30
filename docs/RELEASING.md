@@ -12,7 +12,7 @@ Run these checks before tagging a release. Automated checks run in CI on every p
 
 The browser tests start a small Testbench app from `workbench/` on ports 8765 (Turnstile configured) and 8766 (not configured). Cloudflare's script is replaced by `e2e/turnstile-stub.js`, which behaves like the real widget, including the error it throws when a widget that is no longer on the page is reset. Set `PHP_BIN` to pick a PHP binary and `PLAYWRIGHT_CHANNEL=chrome` to use an installed Chrome instead of the downloaded Chromium.
 
-CI runs the browser tests on Filament 5.7.8 and the latest 5.x.
+CI runs the browser tests on Filament 5.8.3 and the latest 5.x. Earlier 5.x releases have published security advisories, so Composer refuses to install them by default.
 
 ## Manual (real Cloudflare widget)
 

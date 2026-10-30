@@ -87,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        filament: ['5.7.8', '5.*']
+        filament: ['5.8.3', '5.*']
 
     steps:
       - uses: actions/checkout@v6
