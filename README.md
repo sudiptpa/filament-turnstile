@@ -67,7 +67,7 @@ public function form(Schema $schema): Schema
 }
 ```
 
-The field automatically hides itself when credentials are not configured, so local development without keys works out of the box.
+The field automatically hides itself when credentials are not configured, so local development works without keys.
 
 ---
 
@@ -264,7 +264,7 @@ composer coverage    # Coverage report (requires Xdebug)
 
 | Package | Filament | Laravel | PHP |
 | --- | --- | --- | --- |
-| Unreleased | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
+| 1.2.0 | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
 
 Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
 
