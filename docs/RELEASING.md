@@ -28,7 +28,7 @@ CI cannot load the real Cloudflare widget, so check these by hand in a Filament 
 ## Tagging
 
 1. Move the `Unreleased` entries in `CHANGELOG.md` under the new version.
-2. Check that the Filament versions in the README table match what CI ran.
+2. Check that the Requirements table in the README matches what CI ran.
 3. Tag the release.
 
 Apps that published the package views keep their own copy and need to republish after an upgrade. See the README.

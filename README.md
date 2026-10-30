@@ -3,55 +3,39 @@
 [![CI](https://github.com/sudiptpa/filament-turnstile/actions/workflows/ci.yml/badge.svg)](https://github.com/sudiptpa/filament-turnstile/actions/workflows/ci.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sudiptpa/filament-turnstile.svg)](https://packagist.org/packages/sudiptpa/filament-turnstile)
 [![PHP Version](https://img.shields.io/badge/php-8.2%2B-blue)](https://www.php.net)
-[![Downloads](https://img.shields.io/packagist/dt/sudiptpa/filament-turnstile)](https://packagist.org/packages/sudiptpa/filament-turnstile)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-A Cloudflare Turnstile integration built for **Filament v5** and plain Laravel. Drop `TurnstileInput` into any Filament form schema, protect the admin login with one line, or use the standalone validation rule and Blade component in any Laravel controller, form request, or view. No CAPTCHA, no image puzzles, just a silent, privacy-respecting bot challenge.
+Cloudflare Turnstile for Filament 5 and plain Laravel. Add `TurnstileInput` to a Filament form, protect the admin login with one line, or use the validation rule and Blade component anywhere in Laravel.
 
----
-
-## Supported Versions
+## Requirements
 
 | Dependency | Version |
 |---|---|
-| PHP | 8.2, 8.3, 8.4, 8.5 |
-| Laravel | ^12.0, ^13.0 |
-| Filament | ^5.0 (optional) |
+| PHP | 8.2 to 8.5 |
+| Laravel | 12 and 13 |
+| Filament | 5.8.3 or later (optional) |
 
-Filament is only required when using `TurnstileInput` or the bundled `Login` page. The validation rule and Blade component work in any Laravel application.
-
----
+Filament is only needed for `TurnstileInput` and the `Login` page. The validation rule and Blade component work without it. Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later.
 
 ## Installation
 
 ```bash
 composer require sudiptpa/filament-turnstile
-```
-
-The service provider is registered automatically via Laravel package auto-discovery.
-
-Publish the config file:
-
-```bash
 php artisan vendor:publish --tag=filament-turnstile-config
 ```
 
-Add your Cloudflare Turnstile keys to `.env`:
+The service provider is registered by package auto-discovery. Add your keys to `.env`. You can create them in the Cloudflare dashboard under Turnstile.
 
 ```dotenv
 TURNSTILE_SITE_KEY=your-site-key
 TURNSTILE_SECRET_KEY=your-secret-key
 ```
 
-> Register your domain and get free API keys at [dash.cloudflare.com](https://dash.cloudflare.com) → **Turnstile**.
-
----
-
 ## Usage
 
-### 1. Any Filament Form
+### Filament form field
 
-Add `TurnstileInput` to any Filament schema like any other field. The widget renders automatically, the token is validated server-side on submit, and nothing is persisted to your model.
+Add `TurnstileInput` like any other field. The widget renders in the form, the token is validated on the server when the form is submitted, and nothing is saved to your model.
 
 ```php
 use Sujip\Filament\Turnstile\TurnstileInput;
@@ -59,7 +43,6 @@ use Sujip\Filament\Turnstile\TurnstileInput;
 public function form(Schema $schema): Schema
 {
     return $schema->components([
-        TextInput::make('name')->required(),
         TextInput::make('email')->email()->required(),
         Textarea::make('message')->required(),
         TurnstileInput::make('turnstile_token'),
@@ -67,13 +50,11 @@ public function form(Schema $schema): Schema
 }
 ```
 
-The field automatically hides itself when credentials are not configured, so local development works without keys.
+The field is hidden when no keys are configured, so local development works without them.
 
----
+### Filament admin login
 
-### 2. Filament Admin Login
-
-Swap the default Filament login page with the bundled one in your panel provider:
+Use the bundled login page in your panel provider:
 
 ```php
 use Sujip\Filament\Turnstile\Pages\Auth\Login;
@@ -86,20 +67,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-The login page renders the Turnstile widget when credentials are present and skips it when they are not. No conditional logic required in your application.
+The widget is shown when keys are configured and skipped when they are not.
 
-**Multi-factor authentication:** the bundled `Login` page works with Filament's MFA providers (email, authenticator app, custom) without extra setup. The CAPTCHA is verified once, on the credentials form. Submitting the MFA code, retrying a wrong code or resending a code does not require a new token. Filament remains responsible for the challenge, throttling and code verification. Changing the email or password while a challenge is open restarts the credentials step and requires a fresh token. Panels without MFA behave exactly as before.
+The page works with Filament's multi-factor authentication (email, authenticator app or custom providers) without extra setup:
 
----
+- The check runs once, on the email and password step.
+- Entering the code, retrying a wrong code and resending a code need no new check. Filament handles the challenge and its limits.
+- Changing the email or password during the code step restarts it and needs a new check.
 
-### 3. Plain Laravel: Blade Component
+Panels without multi-factor authentication behave as before.
 
-Use the `<x-turnstile />` component in any Blade template. The component accepts optional `theme`, `size`, and any additional HTML attributes.
+### Blade component
 
 ```html
 <form method="POST" action="/contact">
     @csrf
-    <input type="text" name="name" />
     <input type="email" name="email" />
 
     <x-turnstile />
@@ -108,69 +90,33 @@ Use the `<x-turnstile />` component in any Blade template. The component accepts
 </form>
 ```
 
-Cloudflare automatically injects a hidden `cf-turnstile-response` field on challenge completion.
-
-Available props:
-
-| Prop | Default | Options |
-|---|---|---|
-| `theme` | `auto` | `light`, `dark`, `auto` |
-| `size` | `normal` | `normal`, `compact` |
+Cloudflare adds a hidden `cf-turnstile-response` field when the challenge is completed. The component takes `theme` (`light`, `dark` or `auto`, the default), `size` (`normal`, the default, or `compact`) and any HTML attributes:
 
 ```html
 <x-turnstile theme="dark" size="compact" />
 ```
 
----
+### Validation rule
 
-### 4. Plain Laravel: Form Requests
-
-```php
-use Sujip\Filament\Turnstile\Rules\TurnstileRule;
-
-class ContactRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'name'                  => ['required', 'string'],
-            'email'                 => ['required', 'email'],
-            'cf-turnstile-response' => ['required', new TurnstileRule()],
-        ];
-    }
-}
-```
-
----
-
-### 5. Plain Laravel: Controllers
+Validate the `cf-turnstile-response` field with `TurnstileRule`, in a form request or with `$request->validate()` in a controller:
 
 ```php
 use Sujip\Filament\Turnstile\Rules\TurnstileRule;
 
-public function store(Request $request): RedirectResponse
+public function rules(): array
 {
-    $request->validate([
-        'name'                  => ['required', 'string'],
+    return [
         'email'                 => ['required', 'email'],
         'cf-turnstile-response' => ['required', new TurnstileRule()],
-    ]);
-
-    // handle the form ...
+    ];
 }
 ```
 
-The `TurnstileRule` resolves its HTTP client from the service container automatically. You can also pass a client explicitly when needed (e.g. in tests):
+The rule gets its HTTP client from the service container. In tests you can pass one: `new TurnstileRule(app(TurnstileClientContract::class))`.
 
-```php
-new TurnstileRule(app(TurnstileClientContract::class))
-```
+## Custom key resolver
 
----
-
-## Custom Key Resolver
-
-By default, credentials are read from `config/filament-turnstile.php`. If your application resolves keys differently, for example from a database, per-tenant settings, or a secrets manager, implement `TurnstileKeyResolverContract` and bind it in your `AppServiceProvider`:
+Keys are read from `config/filament-turnstile.php` by default. To load them from somewhere else, such as a database, tenant settings or a secrets manager, implement `TurnstileKeyResolverContract` and bind it:
 
 ```php
 use Sujip\Filament\Turnstile\Contracts\TurnstileKeyResolverContract;
@@ -180,8 +126,8 @@ final class YourKeyResolver implements TurnstileKeyResolverContract
 {
     public function credentials(): ?TurnstileCredentials
     {
-        $siteKey   = /* resolve from your source */;
-        $secretKey = /* resolve from your source */;
+        $siteKey   = /* load from your source */;
+        $secretKey = /* load from your source */;
 
         if (blank($siteKey) || blank($secretKey)) {
             return null;
@@ -197,36 +143,30 @@ final class YourKeyResolver implements TurnstileKeyResolverContract
 $this->app->bind(TurnstileKeyResolverContract::class, YourKeyResolver::class);
 ```
 
-Return `null` to indicate that credentials are unavailable. The widget will be suppressed and validation skipped automatically. `TurnstileInput`, the `Login` page, `TurnstileRule`, and `<x-turnstile />` all resolve credentials through this single contract.
+Return `null` when keys are not available. The widget is hidden and validation is skipped. `TurnstileInput`, the `Login` page, `TurnstileRule` and `<x-turnstile />` all use this contract.
 
----
+## Configuration
 
-## Configuration Reference
+| Option | Env variable | Default |
+|---|---|---|
+| `site_key` | `TURNSTILE_SITE_KEY` | none |
+| `secret_key` | `TURNSTILE_SECRET_KEY` | none |
+| `verify_url` | `TURNSTILE_VERIFY_URL` | `https://challenges.cloudflare.com/turnstile/v0/siteverify` |
+| `connect_timeout` | none | 5 seconds |
+| `timeout` | none | 10 seconds |
 
-```php
-// config/filament-turnstile.php
-return [
-    'site_key'        => env('TURNSTILE_SITE_KEY'),
-    'secret_key'      => env('TURNSTILE_SECRET_KEY'),
-    'verify_url'      => env('TURNSTILE_VERIFY_URL', 'https://challenges.cloudflare.com/turnstile/v0/siteverify'),
-    'connect_timeout' => 5,
-    'timeout'         => 10,
-];
-```
+## Testing
 
----
-
-## Testing Locally
-
-Cloudflare provides official test keys that work on any domain, including `localhost`, without registration:
+Cloudflare publishes test keys that work on any domain, including `localhost`:
 
 | Purpose | Site key | Secret key |
 |---|---|---|
 | Always passes | `1x00000000000000000000AA` | `1x0000000000000000000000000000000AA` |
-| Always blocks | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
-| Forces interactive | `3x00000000000000000000FF` | `3x0000000000000000000000000000000AA` |
+| Always fails | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
+| Forces interactive | `3x00000000000000000000FF` | `1x0000000000000000000000000000000AA` |
+| Token already spent | `1x00000000000000000000AA` | `3x0000000000000000000000000000000AA` |
 
-Add these to your `.env.testing` or declare them in `phpunit.xml`:
+Set them in `.env.testing` or `phpunit.xml`:
 
 ```xml
 <php>
@@ -235,52 +175,28 @@ Add these to your `.env.testing` or declare them in `phpunit.xml`:
 </php>
 ```
 
----
-
-## Customising the Views
-
-Publish the package views to override the widget HTML:
+## Customising the views
 
 ```bash
 php artisan vendor:publish --tag=filament-turnstile-views
 ```
 
-Views are published to `resources/views/vendor/filament-turnstile/`.
+The views are published to `resources/views/vendor/filament-turnstile/`. A published copy does not get later fixes to the package views. After upgrading, delete it or publish again with `--force`.
 
----
-
-## Running Package Tests
+## Development
 
 ```bash
 composer install
 composer test        # PHPUnit
 composer stan        # PHPStan level 8
-composer coverage    # Coverage report (requires Xdebug)
+composer coverage    # Coverage report (needs Xdebug)
 ```
 
----
-
-### Compatibility
-
-| Package | Filament | Laravel | PHP |
-| --- | --- | --- | --- |
-| 1.2.0 | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
-
-Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
-
-### Published views
-
-If you published the package views, your copy does not get later fixes. After upgrading, delete the published copy or publish again with `--force`:
-
-```bash
-php artisan vendor:publish --tag=filament-turnstile-views --force
-```
+The checks to run before a release are in [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
-
----
 
 ## License
 
