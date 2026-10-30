@@ -3,7 +3,9 @@ set -euo pipefail
 
 PHP_BIN="php"
 
-if command -v php8.4 >/dev/null 2>&1; then
+if command -v php8.5 >/dev/null 2>&1; then
+    PHP_BIN="php8.5"
+elif command -v php8.4 >/dev/null 2>&1; then
     PHP_BIN="php8.4"
 elif command -v php8.3 >/dev/null 2>&1; then
     PHP_BIN="php8.3"

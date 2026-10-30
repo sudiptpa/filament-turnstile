@@ -6,6 +6,9 @@ namespace Sujip\Filament\Turnstile\Contracts;
 
 use Sujip\Filament\Turnstile\Support\TurnstileVerificationResult;
 
+/**
+ * Resolves Turnstile credentials and sends verification requests to Cloudflare.
+ */
 interface TurnstileClientContract
 {
     public function siteKey(): ?string;

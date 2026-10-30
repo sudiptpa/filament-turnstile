@@ -9,6 +9,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Sujip\Filament\Turnstile\Contracts\TurnstileClientContract;
 use Sujip\Filament\Turnstile\Exceptions\TurnstileException;
 
+/**
+ * Validation rule for verifying a Cloudflare Turnstile token in plain Laravel forms and requests.
+ */
 final class TurnstileRule implements ValidationRule
 {
     private TurnstileClientContract $client;

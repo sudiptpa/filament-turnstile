@@ -7,6 +7,9 @@ namespace Sujip\Filament\Turnstile\Resolvers;
 use Sujip\Filament\Turnstile\Contracts\TurnstileKeyResolverContract;
 use Sujip\Filament\Turnstile\Support\TurnstileCredentials;
 
+/**
+ * Reads Turnstile credentials from the published config file.
+ */
 final class ConfigKeyResolver implements TurnstileKeyResolverContract
 {
     public function credentials(): ?TurnstileCredentials

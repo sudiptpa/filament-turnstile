@@ -8,6 +8,9 @@ use Filament\Forms\Components\Field;
 use Sujip\Filament\Turnstile\Contracts\TurnstileClientContract;
 use Sujip\Filament\Turnstile\Rules\TurnstileRule;
 
+/**
+ * Filament form field that renders the Cloudflare Turnstile widget and validates its token on submit.
+ */
 final class TurnstileInput extends Field
 {
     protected string $view = 'filament-turnstile::turnstile';
