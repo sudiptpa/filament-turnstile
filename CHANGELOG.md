@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-30
+
 ### Fixed
 
 - `Login` page is now Filament multi-factor authentication aware. Turnstile is verified on the credentials submission only; submitting an MFA code (email, authenticator app or custom provider) delegates straight to Filament and no longer re-verifies the single-use token.
@@ -18,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `filament/filament` `^5.0` added as a dev dependency; `Login` page is now covered by tests and static analysis.
+- Filament 5.8.3 is the lowest version listed as supported. Earlier 5.x releases have published security advisories.
+- Added release notes in `docs/RELEASING.md`, a compatibility table in the README, and a test for the widget views.
 
 ## [1.0.0] - 2026-04-30
 

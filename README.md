@@ -264,7 +264,7 @@ composer coverage    # Coverage report (requires Xdebug)
 
 | Package | Filament | Laravel | PHP |
 | --- | --- | --- | --- |
-| Unreleased | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
+| 1.1.1 | 5.8.3 and later | 12 and 13 | 8.2 to 8.5 |
 
 Filament 5.x releases before 5.8.3 have published security advisories, so use 5.8.3 or later. See [docs/RELEASING.md](docs/RELEASING.md) for how each release is checked.
 
