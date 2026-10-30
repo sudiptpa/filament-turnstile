@@ -87,6 +87,8 @@ public function panel(Panel $panel): Panel
 
 The login page renders the Turnstile widget when credentials are present and skips it when they are not — no conditional logic required in your application.
 
+**Multi-factor authentication:** the bundled `Login` page works with Filament's MFA providers (email, authenticator app, custom) without extra setup. The CAPTCHA is verified once, on the credentials form. Submitting the MFA code, retrying a wrong code or resending a code does not require a new token. Filament remains responsible for the challenge, throttling and code verification. Changing the email or password while a challenge is open restarts the credentials step and requires a fresh token. Panels without MFA behave exactly as before.
+
 ---
 
 ### 3. Plain Laravel — Blade Component

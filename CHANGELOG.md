@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `Login` page is now Filament multi-factor authentication aware. Turnstile is verified on the credentials submission only; submitting an MFA code (email, authenticator app or custom provider) delegates straight to Filament and no longer re-verifies the single-use token.
+- Changing the email/password while an MFA challenge is pending clears the challenge and requires a fresh Turnstile token, so a verified token cannot be used to trigger codes for another account.
+- The widget and token are reset after wrong credentials, schema errors and rate-limited credentials attempts, without disturbing an active MFA challenge. Reset events are no longer dispatched twice.
+
+### Changed
+
+- `filament/filament` `^5.0` added as a dev dependency; `Login` page is now covered by tests and static analysis.
+
 ## [1.0.0] - 2026-04-30
 
 ### Added
