@@ -46,6 +46,7 @@ final class LoginMultiFactorTest extends TestCase
         $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('k', 32)));
         $app['config']->set('auth.providers.users.model', TestUser::class);
         $app['config']->set('session.driver', 'array');
+        $app['config']->set('cache.default', 'array');
     }
 
     protected function setUp(): void
@@ -187,6 +188,20 @@ final class LoginMultiFactorTest extends TestCase
         $c2->set('data.email', $victim->email)->call('authenticate')->assertHasErrors(['turnstileToken']);
         Notification::assertNotSentTo($victim, VerifyEmailAuthentication::class);
         $this->assertSame(2, $this->turnstile->verifyCalls);
+    }
+
+    public function test_wrong_password_during_challenge_requires_fresh_captcha(): void
+    {
+        $this->user('m@example.com', true);
+
+        $c = $this->submit(Livewire::test(Login::class), 'm@example.com', 't1');
+        $this->assertSame(1, $this->turnstile->verifyCalls);
+
+        $c->set('data.password', 'guess-1')->call('authenticate')->assertHasErrors(['turnstileToken']);
+
+        $this->assertSame(1, $this->turnstile->verifyCalls);
+        $this->assertFalse(Filament::auth()->check());
+        $this->assertEmpty($c->get('userUndertakingMultiFactorAuthentication'));
     }
 
     public function test_unconfigured_turnstile_works_with_and_without_mfa(): void

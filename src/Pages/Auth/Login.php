@@ -97,29 +97,17 @@ class Login extends FilamentLogin
     private function verifyTurnstileToken(TurnstileClientContract $client): void
     {
         if ($this->turnstileToken === '') {
-            $this->resetTurnstile();
-
-            throw ValidationException::withMessages([
-                'turnstileToken' => 'Please complete the security challenge.',
-            ]);
+            $this->throwTurnstileError('Please complete the security challenge.');
         }
 
         try {
             $result = $client->verify($this->turnstileToken);
         } catch (TurnstileException) {
-            $this->resetTurnstile();
-
-            throw ValidationException::withMessages([
-                'turnstileToken' => 'The security challenge could not be verified. Please try again.',
-            ]);
+            $this->throwTurnstileError('The security challenge could not be verified. Please try again.');
         }
 
         if (! $result->isSuccessful()) {
-            $this->resetTurnstile();
-
-            throw ValidationException::withMessages([
-                'turnstileToken' => 'The security challenge failed. Please try again.',
-            ]);
+            $this->throwTurnstileError('The security challenge failed. Please try again.');
         }
     }
 
@@ -159,6 +147,11 @@ class Login extends FilamentLogin
         return filled($this->userUndertakingMultiFactorAuthentication);
     }
 
+    /**
+     * True only when the submitted credentials belong to the account the
+     * pending challenge was issued for. Filament still rechecks everything
+     * itself; this only decides whether a new CAPTCHA token is needed.
+     */
     private function pendingChallengeMatchesSubmittedAccount(): bool
     {
         try {
@@ -175,34 +168,21 @@ class Login extends FilamentLogin
                 return false;
             }
 
-            $user = $guard->getProvider()->retrieveByCredentials(
-                $this->getCredentialsFromFormData($data)
-            );
+            $credentials = $this->getCredentialsFromFormData($data);
+            $provider = $guard->getProvider();
+            $user = $provider->retrieveByCredentials($credentials);
 
-            if ($user === null) {
+            if ($user === null || ! $provider->validateCredentials($user, $credentials)) {
                 return false;
             }
 
             // Older Filament releases store the bare identifier. Newer ones
-            // store an array with the identifier and a user-scoped key.
+            // store an array that also holds a user-scoped key, which the
+            // parent verifies before completing the login.
             $payload = decrypt($pending);
             $identifier = is_array($payload) ? ($payload['identifier'] ?? null) : $payload;
 
-            if ($identifier === null || $identifier !== $user->getAuthIdentifier()) {
-                return false;
-            }
-
-            if (is_array($payload)) {
-                $manager = Filament::getFacadeRoot();
-
-                if (! is_string($payload['userKey'] ?? null) || ! is_object($manager) || ! method_exists($manager, 'getUserScopedAuthIdentifier')) {
-                    return false;
-                }
-
-                return hash_equals($payload['userKey'], $manager->getUserScopedAuthIdentifier($user));
-            }
-
-            return true;
+            return $identifier !== null && $identifier === $user->getAuthIdentifier();
         } catch (Throwable) {
             return false;
         }
