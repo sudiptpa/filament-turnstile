@@ -8,28 +8,52 @@
     <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
         <div
             wire:ignore
-            x-data="{ widgetId: null }"
-            x-init="
-                const init = () => {
-                    if (typeof turnstile === 'undefined') {
-                        setTimeout(init, 50);
-                        return;
-                    }
-                    widgetId = turnstile.render($refs.widget, {
-                        sitekey: '{{ $siteKey }}',
-                        callback: (token) => $wire.set('{{ $statePath }}', token),
-                        'expired-callback': () => $wire.set('{{ $statePath }}', ''),
-                        'error-callback': () => $wire.set('{{ $statePath }}', ''),
-                    });
-                };
-                init();
+            x-data="{
+                widgetId: null,
+                stopListening: null,
+                init() {
+                    const render = () => {
+                        if (typeof turnstile === 'undefined') {
+                            setTimeout(render, 50);
+                            return;
+                        }
+                        this.widgetId = turnstile.render(this.$refs.widget, {
+                            sitekey: '{{ $siteKey }}',
+                            callback: (token) => this.$wire.set('{{ $statePath }}', token),
+                            'expired-callback': () => this.$wire.set('{{ $statePath }}', ''),
+                            'error-callback': () => this.$wire.set('{{ $statePath }}', ''),
+                        });
+                    };
+                    render();
 
-                $wire.on('turnstile.reset', () => {
-                    if (widgetId !== null && typeof turnstile !== 'undefined') {
-                        turnstile.reset(widgetId);
+                    this.stopListening = this.$wire.on('turnstile.reset', () => {
+                        if (this.widgetId === null || typeof turnstile === 'undefined') {
+                            return;
+                        }
+
+                        try {
+                            turnstile.reset(this.widgetId);
+                        } catch (e) {
+                            // The widget is already gone.
+                        }
+                    });
+                },
+                destroy() {
+                    if (this.stopListening) {
+                        this.stopListening();
                     }
-                });
-            "
+
+                    if (this.widgetId !== null && typeof turnstile !== 'undefined') {
+                        try {
+                            turnstile.remove(this.widgetId);
+                        } catch (e) {
+                            // Nothing left to remove.
+                        }
+                    }
+
+                    this.widgetId = null;
+                },
+            }"
         >
             <div x-ref="widget"></div>
         </div>

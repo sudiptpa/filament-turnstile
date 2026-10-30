@@ -4,8 +4,9 @@ parameters:
         - src
         - tests
     excludePaths:
-        # filament/filament is not a dev dependency, so the Login page is excluded from analysis
-        - src/Pages/Auth/Login.php
+        # Livewire/Eloquent-driven integration fixtures are dynamic by nature
+        - tests/Feature/LoginMultiFactorTest.php
+        - tests/Support/TestUser.php
     ignoreErrors:
         -
             # Test stubs pass simplified closures that don't match the full $fail signature type

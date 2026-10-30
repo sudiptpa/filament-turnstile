@@ -4,28 +4,52 @@
 --}}
 <div
     wire:ignore
-    x-data="{ widgetId: null }"
-    x-init="
-        const init = () => {
-            if (typeof turnstile === 'undefined') {
-                setTimeout(init, 50);
-                return;
-            }
-            widgetId = turnstile.render($refs.widget, {
-                sitekey: '{{ $siteKey }}',
-                callback: (token) => $wire.set('turnstileToken', token),
-                'expired-callback': () => $wire.set('turnstileToken', ''),
-                'error-callback': () => $wire.set('turnstileToken', ''),
-            });
-        };
-        init();
+    x-data="{
+        widgetId: null,
+        stopListening: null,
+        init() {
+            const render = () => {
+                if (typeof turnstile === 'undefined') {
+                    setTimeout(render, 50);
+                    return;
+                }
+                this.widgetId = turnstile.render(this.$refs.widget, {
+                    sitekey: '{{ $siteKey }}',
+                    callback: (token) => this.$wire.set('turnstileToken', token),
+                    'expired-callback': () => this.$wire.set('turnstileToken', ''),
+                    'error-callback': () => this.$wire.set('turnstileToken', ''),
+                });
+            };
+            render();
 
-        $wire.on('turnstile.reset', () => {
-            if (widgetId !== null && typeof turnstile !== 'undefined') {
-                turnstile.reset(widgetId);
+            this.stopListening = this.$wire.on('turnstile.reset', () => {
+                if (this.widgetId === null || typeof turnstile === 'undefined') {
+                    return;
+                }
+
+                try {
+                    turnstile.reset(this.widgetId);
+                } catch (e) {
+                    // The widget is already gone, for example while the MFA step is shown.
+                }
+            });
+        },
+        destroy() {
+            if (this.stopListening) {
+                this.stopListening();
             }
-        });
-    "
+
+            if (this.widgetId !== null && typeof turnstile !== 'undefined') {
+                try {
+                    turnstile.remove(this.widgetId);
+                } catch (e) {
+                    // Nothing left to remove.
+                }
+            }
+
+            this.widgetId = null;
+        },
+    }"
 >
     <div x-ref="widget"></div>
 </div>
