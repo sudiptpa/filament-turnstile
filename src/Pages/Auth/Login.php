@@ -176,8 +176,30 @@ class Login extends FilamentLogin
                 $this->getCredentialsFromFormData($data)
             );
 
-            return $user !== null
-                && decrypt($pending) === $user->getAuthIdentifier();
+            if ($user === null) {
+                return false;
+            }
+
+            // Older Filament releases store the bare identifier. Newer ones
+            // store an array with the identifier and a user-scoped key.
+            $payload = decrypt($pending);
+            $identifier = is_array($payload) ? ($payload['identifier'] ?? null) : $payload;
+
+            if ($identifier === null || $identifier !== $user->getAuthIdentifier()) {
+                return false;
+            }
+
+            if (is_array($payload)) {
+                $manager = Filament::getFacadeRoot();
+
+                if (! is_string($payload['userKey'] ?? null) || ! is_object($manager) || ! method_exists($manager, 'getUserScopedAuthIdentifier')) {
+                    return false;
+                }
+
+                return hash_equals($payload['userKey'], $manager->getUserScopedAuthIdentifier($user));
+            }
+
+            return true;
         } catch (Throwable) {
             return false;
         }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Sujip\Filament\Turnstile\Tests\Feature;
 
+use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Sujip\Filament\Turnstile\Contracts\TurnstileClientContract;
@@ -15,7 +15,6 @@ use Sujip\Filament\Turnstile\Tests\Support\FakeTurnstileClient;
 use Sujip\Filament\Turnstile\Tests\Support\TestPanelProvider;
 use Sujip\Filament\Turnstile\Tests\Support\TestUser;
 use Sujip\Filament\Turnstile\Tests\TestCase;
-use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 
 final class LoginMultiFactorTest extends TestCase
 {
@@ -69,7 +68,6 @@ final class LoginMultiFactorTest extends TestCase
         $this->app->instance(TurnstileClientContract::class, $this->turnstile);
 
         Filament::setCurrentPanel('admin');
-        RateLimiter::clear('x');
         Notification::fake();
     }
 
